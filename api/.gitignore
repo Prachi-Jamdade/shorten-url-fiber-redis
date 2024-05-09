@@ -1,0 +1,22 @@
+# Binary Executables
+*.exe
+*.out
+
+# Compiled Object Files
+*.o
+*.obj
+
+# Build Directories
+/bin/
+/obj/
+
+# Environment-specific Configuration Files
+.env
+
+# Database Files
+*.db
+
+# Dependency Management Files 
+go.sum
+
+.vscode/
