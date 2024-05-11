@@ -34,7 +34,7 @@ func ShortenURL(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
-	clientIP := helpers.getClientIP(c)
+	clientIP := helpers.GetClientIP(c)
 
 	// implement rate limiting
 	redisClient2 := database.CreateClient(1)

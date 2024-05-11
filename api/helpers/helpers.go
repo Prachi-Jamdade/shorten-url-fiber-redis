@@ -38,7 +38,7 @@ func RemoveDomainError(url string) bool {
 	return true
 }
 
-func getClientIP(c *fiber.Ctx) string {
+func GetClientIP(c *fiber.Ctx) string {
 	clientIP := c.Get(fiber.HeaderXForwardedFor)
 	if clientIP == "" {
 		clientIP = c.IP()
