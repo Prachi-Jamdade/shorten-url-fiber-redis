@@ -3,8 +3,6 @@ package helpers
 import (
 	"os"
 	"strings"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 func EnforceHTTP(url string) string {
@@ -38,10 +36,10 @@ func RemoveDomainError(url string) bool {
 	return true
 }
 
-func GetClientIP(c *fiber.Ctx) string {
-	clientIP := c.Get(fiber.HeaderXForwardedFor)
-	if clientIP == "" {
-		clientIP = c.IP()
-	}
-	return clientIP
-}
+// func GetClientIP(c *fiber.Ctx) string {
+// 	clientIP := c.Get(fiber.HeaderXForwardedFor)
+// 	if clientIP == "" {
+// 		clientIP = c.IP()
+// 	}
+// 	return clientIP
+// }
