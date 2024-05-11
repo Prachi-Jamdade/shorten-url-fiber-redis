@@ -3,12 +3,14 @@ package helpers
 import (
 	"os"
 	"strings"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func EnforceHTTP(url string) string {
 
-	if url[:4] != "https" {
-		return "https://" + url
+	if url[:4] != "http" {
+		return "http://" + url
 	}
 	return url
 
@@ -34,4 +36,12 @@ func RemoveDomainError(url string) bool {
 	}
 
 	return true
+}
+
+func getClientIP(c *fiber.Ctx) string {
+	clientIP := c.Get(fiber.HeaderXForwardedFor)
+	if clientIP == "" {
+		clientIP = c.IP()
+	}
+	return clientIP
 }

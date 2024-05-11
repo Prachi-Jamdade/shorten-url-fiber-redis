@@ -34,18 +34,20 @@ func ShortenURL(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
+	clientIP := helpers.getClientIP(c)
+
 	// implement rate limiting
 	redisClient2 := database.CreateClient(1)
 	defer redisClient2.Close()
 
-	val, err := redisClient2.Get(database.Context, c.IP()).Result()
+	val, err := redisClient2.Get(database.Context, clientIP).Result()
 	if err == redis.Nil {
-		_ = redisClient2.Set(database.Context, c.IP(), os.Getenv("APP_QUOTA"), 30*60*time.Second).Err()
+		_ = redisClient2.Set(database.Context, clientIP, os.Getenv("APP_QUOTA"), 30*60*time.Second).Err()
 	} else {
-		val, _ = redisClient2.Get(database.Context, c.IP()).Result()
+		val, _ = redisClient2.Get(database.Context, clientIP).Result()
 		valInt, _ := strconv.Atoi(val)
 		if valInt <= 0 {
-			limit, _ := redisClient2.TTL(database.Context, c.IP()).Result()
+			limit, _ := redisClient2.TTL(database.Context, clientIP).Result()
 			return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{"error": "Rate limit exceeded", "rate_limit_reset": limit / time.Nanosecond / time.Minute})
 		}
 	}
@@ -99,12 +101,12 @@ func ShortenURL(c *fiber.Ctx) error {
 		XRateLimitReset: 30,
 	}
 
-	redisClient2.Decr(database.Context, c.IP())
+	redisClient2.Decr(database.Context, clientIP)
 
-	val, _ = redisClient2.Get(database.Context, c.IP()).Result()
+	val, _ = redisClient2.Get(database.Context, clientIP).Result()
 	resp.XRateRemaining, _ = strconv.Atoi(val)
 
-	ttl, _ := redisClient2.TTL(database.Context, c.IP()).Result()
+	ttl, _ := redisClient2.TTL(database.Context, clientIP).Result()
 	resp.XRateLimitReset = ttl / time.Nanosecond / time.Minute
 
 	resp.CustomShort = os.Getenv("DOMAIN") + "/" + id
